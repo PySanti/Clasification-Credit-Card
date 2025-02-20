@@ -14,6 +14,7 @@ Los algoritmos que se planean utilizar seran:
 * Regresion Logistica
 * SVC
 * Random forest
+* Naive Bayes: Bernoulli
 
 En el caso de SVC solo se implementara en caso de que realice buenas predicciones despues de ser entrenado utilizando un conjunto representativo de los datos, dado el gran tiempo de entrenamiento que conlleva este algoritmo.
 
@@ -54,6 +55,10 @@ El estudio de seleccion de caracteristicas resulto que las unicas caracteristica
 
 ## Entrenamiento
 
+La forma de afrontar el entrenamiento sera ejecutando un proceso de seleccion de modelo para cada uno de los algoritmos mencionados utilizando el 80% del dataset representativo, ignorando el desequilibrio de los datos. Se tratara de lograr la mayor precision posible utilizando stacking.
+
+*Nota: se concluyo que lo mejor era no utilizar SVC dada la necesidad computacional y su mal rendimiento con conjuntos de datos desequilibrados.*
+
 1- Busqueda de mejores hiperparametros para Regresion logistica y almacenamiento de modelo en disco: despues de hacer una prueba rapida utilizando el 90% del conjunto de datos inicial, obtuvimos el siguiente rendimiento:
 
 
@@ -81,11 +86,11 @@ Esta es la mejor combinacion de hiperparametros para regresion logistica despues
 {'C': 0.01, 'class_weight': None, 'dual': False, 'fit_intercept': True, 'intercept_scaling': 1, 'l1_ratio': None, 'max_iter': 100, 'multi_class': 'deprecated', 'n_jobs': None, 'penalty': 'l2', 'random_state': None, 'solver': 'newton-cholesky', 'tol': 0.0001, 'verbose': 0, 'warm_start': False}
 ```
 
-Tener en cuenta que, en el estudio anterior, se utilizaron *todos los ejemplos del dataset*.
+Una vez almacenado el modelo de regresion logistica en disco, se realizo el proceso de seleccion de modelo para el algoritmo Naive Bayes: Bernoulli, resultado en los siguientes hiperparametros:
 
+```
+{'alpha': np.float64(0.74), 'binarize': 0.0, 'class_prior': None, 'fit_prior': True, 'force_alpha': True}
+```
 
-### Estudio de hiperparametros de SVC
-
-Para el estudio de hiperparametros optimos de SVC se utilizara el 50% del conjunto original.
-
+Se procedio a la busqueda de los mejores hiperparametros para random forest.
 
