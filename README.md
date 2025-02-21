@@ -141,9 +141,9 @@ F1-score, clase positiva: 0.7292817679558011
 F1-score, clase negativa : 0.9995692042587236
 ```
 
-El algoritmo que mejor funciona individualmente es Random Forest, a pesar de estar generando bastante overfitting. Lo anterior seguramente es debido a la normalización por defecto que trae el dataset y por el desequilibrio de los datos. Recordemos que, Random Forest, dada su naturaleza, es un algoritmo que tiende a funcionar peor con conjuntos de datos normalizados y desequilibrados.
+El algoritmo que mejor funciona individualmente es *Random Forest*, a pesar de estar generando bastante *overfitting*. Lo anterior seguramente es debido a la normalización por defecto que trae el dataset y por el desequilibrio de los datos. Recordemos que, Random Forest, dada su naturaleza, es un algoritmo que tiende a funcionar peor con conjuntos de datos normalizados y desequilibrados.
 
-Por último, se creará un *meta-modelo* de regresión logística utilizando como base todos los modelos anteriores, basándonos en el concepto de staking dentro del contexto de ensemble learning. Estos son los resultados del meta modelo:
+Por último, se creará un *meta-modelo* de *BernoulliNB* utilizando en el nivel inferior todos los modelos anteriores, basándonos en el concepto de *staking dentro del contexto de ensemble learning*. Estos son los resultados del meta modelo:
 
 ```
 Train
@@ -157,9 +157,9 @@ F1-score, clase positiva: 0.8804347826086957
 F1-score, clase negativa : 0.9998065764023211
 ```
 
-Destacar que el resultado del meta-modelo es indiferente del algoritmo que se utilice en el nivel superior, ya sea RegresionLogistica, Random Forest o Naive Bayes.
+Destacar que el resultado del meta-modelo *es indiferente del algoritmo que se utilice en el nivel superior*, ya sea RegresionLogistica, Random Forest o Naive Bayes.
 
-Destacar que, utilizando la clase *StackingClassifier* de la libreria *mlxtend*, el meta-modelo es indiferente a hiperparametros optimos. Es decir, para el siguiente codigo:
+Destacar ademas que, utilizando la clase *StackingClassifier* de la libreria *mlxtend*, el meta-modelo es indiferente a hiperparametros optimos. Es decir, para el siguiente codigo:
 
 ```
 from utils.load_data import load_data
