@@ -142,4 +142,20 @@ F1-score, clase negativa : 0.9995692042587236
 
 El algoritmo que mejor funciona individualmente es Random Forest, a pesar de estar generando bastante overfitting. Lo anterior seguramente es debido a la normalizacion por defecto que trae el dataset. Recordemos que, Random Forest, dada su naturaleza, es un algoritmo que tiende a funcionar peor con conjuntos de datos normalizados.
 
-Por ultimo, se creara un *meta-modelo* de regresion logistica utilizando como base todos los modelos anteriores basandonos en el concepto de staking dentro del contexto de ensemble learning.
+Por ultimo, se creara un *meta-modelo* de regresion logistica utilizando como base todos los modelos anteriores basandonos en el concepto de staking dentro del contexto de ensemble learning. Estos son los resultados del meta modelo:
+
+```
+Train
+
+F1-score, clase positiva: 0.987146529562982
+F1-score, clase negativa : 0.9999780177265053
+
+Test
+
+F1-score, clase positiva: 0.8804347826086957
+F1-score, clase negativa : 0.9998065764023211
+```
+
+Destacar que el resultado del meta-modelo es indiferente del algoritmo que se utilice en el nivel superior.
+
+
