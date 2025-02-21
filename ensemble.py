@@ -3,11 +3,10 @@ from sklearn.model_selection import train_test_split
 import joblib
 from mlxtend.classifier import StackingClassifier
 from sklearn.naive_bayes import BernoulliNB
-from utils.precision import precision
 import pandas as pd
+from utils.precision import precision
 
 
-meta_model = BernoulliNB()
 
 TARGET = "Class"
 
@@ -21,9 +20,6 @@ nb_model = joblib.load("./models/NB_model.joblib")
 
 X_train, Y_train = [train_df.drop(TARGET, axis=1), train_df[TARGET]]
 X_test, Y_test = [test_df.drop(TARGET, axis=1), test_df[TARGET]]
-
-stacked_model = StackingClassifier(classifiers=[rl_model, rf_model, nb_model],   
-                                   meta_classifier=meta_model)
 
 stacked_X_train, stacked_Y_train = [
     pd.DataFrame({
@@ -44,8 +40,10 @@ stacked_X_test, stacked_Y_test = [
 ]
 
 
-stacked_model.fit(stacked_X_train, stacked_Y_train)
-joblib.dump(stacked_model, "meta_model.joblib")
+stacked_model = StackingClassifier(classifiers=[rl_model, rf_model, nb_model],   
+                                   meta_classifier=BernoulliNB())
 
-precision(stacked_Y_train, stacked_model.predict(stacked_X_train), "Train")
-precision(stacked_Y_test, stacked_model.predict(stacked_X_test), "Test")
+stacked_model.fit(stacked_X_train, stacked_Y_train)
+
+precision(stacked_Y_train, stacked_model.predict(stacked_X_train), "train")
+precision(stacked_Y_test, stacked_model.predict(stacked_X_test), "test")
