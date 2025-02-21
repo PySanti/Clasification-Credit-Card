@@ -59,8 +59,6 @@ La forma de afrontar el entrenamiento sera ejecutando un proceso de seleccion de
 
 *Nota: se concluyo que lo mejor era no utilizar SVC dada la necesidad computacional y su mal rendimiento con conjuntos de datos desequilibrados.*
 
-1- Busqueda de mejores hiperparametros para Regresion logistica y almacenamiento de modelo en disco: despues de hacer una prueba rapida utilizando el 90% del conjunto de datos inicial, obtuvimos el siguiente rendimiento:
-
 
 ```
 # hiperparametros
@@ -92,5 +90,56 @@ Una vez almacenado el modelo de regresion logistica en disco, se realizo el proc
 {'alpha': np.float64(0.74), 'binarize': 0.0, 'class_prior': None, 'fit_prior': True, 'force_alpha': True}
 ```
 
-Se procedio a la busqueda de los mejores hiperparametros para random forest.
+Se procedio a la busqueda de los mejores hiperparametros para random forest. Una vez finalizada, se concluyo que los siguientes, son los hiperparametros mas optimos.
 
+{'bootstrap': False, 'ccp_alpha': 0.0, 'class_weight': None, 'criterion': 'gini', 'max_depth': 20, 'max_features': 'log2', 'max_leaf_nodes': None, 'max_samples': None, 'min_impurity_decrease': 0.0, 'min_samples_leaf': 1, 'min_samples_split': 5, 'min_weight_fraction_leaf': 0.0, 'monotonic_cst': None, 'n_estimators': np.int64(180), 'n_jobs': None, 'oob_score': False, 'random_state': None, 'verbose': 0, 'warm_start': False}
+
+
+
+## Evaluacion
+
+Despues de haber encontrado los hiperparametros mas optimos para todos los algoritmos mencionados, estos son los resultados individuales de cada modelo:
+
+```
+# Modelo: Regresion Logistica
+
+Train
+
+F1-score, clase positiva: 0.7236641221374046
+F1-score, clase negativa : 0.9996022284000132
+
+Test
+
+F1-score, clase positiva: 0.7017543859649122
+F1-score, clase negativa : 0.9995516601759954
+
+
+# Modelo: Random Forest
+
+Train
+
+F1-score, clase positiva: 0.987146529562982
+F1-score, clase negativa : 0.9999780177265053
+
+Test
+
+F1-score, clase positiva: 0.8804347826086957
+F1-score, clase negativa : 0.9998065764023211
+
+
+# Modelo: Naive Bayes
+
+Train
+
+F1-score, clase positiva: 0.7317073170731707
+F1-score, clase negativa : 0.9995890046660059
+
+Test
+
+F1-score, clase positiva: 0.7292817679558011
+F1-score, clase negativa : 0.9995692042587236
+```
+
+El algoritmo que mejor funciona individualmente es Random Forest, a pesar de estar generando bastante overfitting. Lo anterior seguramente es debido a la normalizacion por defecto que trae el dataset. Recordemos que, Random Forest, dada su naturaleza, es un algoritmo que tiende a funcionar peor con conjuntos de datos normalizados.
+
+Por ultimo, se creara un *meta-modelo* de regresion logistica utilizando como base todos los modelos anteriores basandonos en el concepto de staking dentro del contexto de ensemble learning.
