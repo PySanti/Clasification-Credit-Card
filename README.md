@@ -215,3 +215,76 @@ precision(stacked_Y_test, stacked_model.predict(stacked_X_test), "test")
 ```
 
 La logica puede llevar a pensar que se debe hacer algun procedimiento para encontrar los mejores hiperparametros para el *stacked_classifier*, pero la realidad es que, al hacer eso (realizando un procedimiento de seleccion de modelo para BernoulliNB utilizando *stacked_X_train* y *stacked_Y_train*), los resultados empeoran.
+
+
+Observacion: Despues de analizar detenidamente el proyecto, me di cuenta de que cometi un error en el proceso de entrenamiento del *meta-modelo*. El error especificaemnte fue utilizar las predicciones de los modelos de nivel inferior sobre el dataset de entrenamiento para alimentar al meta-modelo. Lo correcto es entrenar el meta-modelo utilizando predicciones de ejemplos nunca vistos por los modelos.
+
+Para lograr lo anterior, se dividio el conjunto de test en dos conjuntos, uno de validacion y otro de test. Teniendo en cuenta que ambos conjuntos nunca habian sido vistos por los modelos, se entreno el meta-modelo utilizando las predicciones de los modelos de nivel inferior sobre el conjunto de validacion, para depues testear el meta-modelo con el conjunto de test. Utilizando el siguiente codigo:
+
+```
+from utils.load_data import load_data
+from sklearn.model_selection import train_test_split
+import joblib
+from mlxtend.classifier import StackingClassifier
+from sklearn.naive_bayes import BernoulliNB
+import pandas as pd
+from utils.precision import precision
+
+
+
+TARGET = "Class"
+
+MAIN_DF =  load_data("./data/creditcard.csv", TARGET)
+
+train_df, unseen_df = train_test_split(MAIN_DF, test_size=0.2, random_state=42, stratify=MAIN_DF[TARGET])
+
+rl_model = joblib.load("./models/logistic_regression_model.joblib")
+rf_model = joblib.load("./models/random_forest_model.joblib")
+nb_model = joblib.load("./models/NB_model.joblib")
+
+
+validation_df, test_df = train_test_split(unseen_df, test_size=0.3, random_state=42, stratify=unseen_df[TARGET])
+X_validation,Y_validation = [validation_df.drop(TARGET, axis=1), validation_df[TARGET]]
+X_test, Y_test = [test_df.drop(TARGET, axis=1), test_df[TARGET]]
+
+
+
+
+stacked_X_train, stacked_Y_train = [
+    pd.DataFrame({
+        "rl" : rl_model.predict(X_validation),
+        "rf" : rf_model.predict(X_validation),
+        "nb" : nb_model.predict(X_validation)
+    }),
+    Y_validation
+]
+
+stacked_X_test, stacked_Y_test = [
+    pd.DataFrame({
+        "rl" : rl_model.predict(X_test),
+        "rf" : rf_model.predict(X_test),
+        "nb" : nb_model.predict(X_test)
+    }),
+    Y_test
+]
+
+stacked_model = StackingClassifier(classifiers=[rl_model, rf_model, nb_model],meta_classifier=BernoulliNB())
+stacked_model.fit(stacked_X_train, stacked_Y_train)
+
+precision(stacked_Y_train, stacked_model.predict(stacked_X_train), "train")
+precision(stacked_Y_test, stacked_model.predict(stacked_X_test), "test")
+
+```
+
+Con ello, el overfitting se redujo mucho, finalizando el proyecto con los siguientes resultados:
+
+```
+train
+
+F1-score, clase positiva: 0.8837209302325582
+F1-score, clase negativa : 0.9998115980255473
+test
+
+F1-score, clase positiva: 0.8727272727272727
+F1-score, clase negativa : 0.9997948597720013
+```
